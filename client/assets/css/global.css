@@ -45,15 +45,16 @@ h4 {
 
 /* Layout */
 .sr-root {
-  display: flex;
-  flex-direction: column;
-  width: 600px;
-  max-width: 600px;
-  padding: 48px;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* width: 600px; */
+  /* max-width: 600px; */
+  padding: 0 20px;
   align-content: center;
   justify-content: center;
-  height: auto;
-  min-height: 100vh;
+  text-align: left;
+  /* height: auto; */
+  /* min-height: 100vh; */
   margin: 0 auto;
 }
 .sr-header {
@@ -68,7 +69,9 @@ h4 {
 }
 .sr-main,
 .sr-content {
-  display: flex;
+  /* display: flex; */
+  padding: 20px;
+  background-color: #f1faee;
   justify-content: center;
   height: 100%;
   align-self: center;
@@ -103,6 +106,7 @@ h4 {
 
 /* Form */
 .sr-form-row {
+  display: flex;
   margin: 16px 0;
 }
 label {
@@ -114,13 +118,12 @@ label {
 
 /* Inputs */
 .sr-input,
-.sr-select,
-input[type="text"],
-input[type="number"] {
+.sr-input3,
+.sr-select {
   border: 1px solid var(--gray-border);
   border-radius: var(--radius);
   padding: 5px 12px;
-  height: 44px;
+  /* height: 44px; */
   width: 100%;
   transition: box-shadow 0.2s ease;
   background: white;
@@ -129,7 +132,11 @@ input[type="number"] {
   appearance: none;
   color: #32325d;
 }
+.sr-input3{
+  margin-top: 10px;
+}
 .sr-input:focus,
+
 input[type="text"]:focus,
 button:focus,
 .focused {
@@ -142,6 +149,33 @@ button:focus,
 input[type="text"]::placeholder,
 input[type="number"]::placeholder {
   color: var(--gray-light);
+}
+
+.sr-input1 {
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 5px 12px;
+  /* height: 44px; */
+  width: 48%;
+  transition: box-shadow 0.2s ease;
+  background: white;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  color: #32325d;
+}
+
+.sr-input2 {
+  width: 12%;
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 5px 12px;
+  transition: box-shadow 0.2s ease;
+  background: white;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  color: #32325d;
 }
 
 /* Checkbox */
@@ -263,7 +297,8 @@ input[type="number"]::placeholder {
 
 /* Buttons and links */
 button {
-  background: var(--accent-color);
+  /* background: var(--accent-color); */
+  background-color: #457b9d;
   border-radius: var(--radius);
   color: white;
   border: 0;
@@ -280,6 +315,7 @@ button:hover:enabled {
 button:active {
   transform: translateY(0px) scale(0.98);
   filter: brightness(0.9);
+  background-color: #1d3557;
 }
 button:disabled {
   opacity: 0.5;
@@ -526,7 +562,7 @@ input:disabled {
   border-radius: var(--radius);
   font-size: 0.7em;
   width: 100%;
-  position: absolute;
+  /* position: absolute; */
   top: 545px;
   max-height: 100px;
   overflow-y: scroll;
@@ -540,7 +576,7 @@ input:disabled {
   animation-timing-function: ease;
 }
 
-.sr-payment-form .sr-form-row {
+.sr-payment-form {
   animation: 0.4s field-in;
   animation-fill-mode: both;
   animation-timing-function: ease;

@@ -1,4 +1,6 @@
-require("dotenv").config({ path: "./.env" });
+// require("dotenv").config({ path: "./.env" });
+const dotenv = require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const app = express();
 app.use(express.json({}));
@@ -31,12 +33,13 @@ app.get("/api/readers", async (req, res) => {
 
 app.post("/api/readers/process-payment", async (req, res) => {
   try {
-    const { amount, readerId } = req.body;
+    const { amount, readerId, description } = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "usd",
       amount,
       payment_method_types: ["card_present"],
       capture_method: "manual",
+      description: description,
     });
 
     const reader = await stripe.terminal.readers.processPaymentIntent(

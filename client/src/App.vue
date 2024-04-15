@@ -6,8 +6,9 @@ import SrMessages from "./components/SrMessages.vue";
 const readersList = ref(null);
 const readerId = ref(null);
 const reader = ref(null);
-const amount = ref(null);
 const paymentIntent = ref(null);
+const description = ref(null)
+let amount = ref(null);
 
 // For error messages
 const messages = ref([]);
@@ -20,6 +21,31 @@ onBeforeMount(async () => {
   readersList.value = result.readersList;
 });
 
+//other fx
+let amountObj = {
+  dollar: "",
+  cent: "",
+};
+const input2Fx = () => {
+  amountObj.cent = amountObj.cent.toString();
+  let firstTwoDigits = amountObj.cent.slice(0, 2);
+  if (amountObj.cent.length > 2) {
+    alert("Input two digits only");
+  }
+  amountObj.cent = parseInt(firstTwoDigits);
+  input1Fx();
+  console.log(amountObj.cent);
+};
+
+const input1Fx = () => {
+  const oldCent = amountObj.cent ? amountObj.cent : "00";
+  const newCent = oldCent.toString();
+  const newDollar = amountObj.dollar.toString();
+  const tt = `${newDollar}${newCent}`;
+  amount.value = parseInt(tt);
+  console.log(amount.value);
+};
+
 // Process payment click handler
 const processPayment = async () => {
   const response = await fetch("/api/readers/process-payment", {
@@ -27,9 +53,16 @@ const processPayment = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ amount: amount.value, readerId: readerId.value }),
+    body: JSON.stringify({
+      amount: amount.value,
+      readerId: readerId.value,
+      description: description.value,
+    }),
   });
   const result = await response.json();
+  document.getElementById(
+    "gif"
+  ).innerHTML = `<img src="https://media.tenor.com/9ky5mvBLS0gAAAAM/free-im-free.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
@@ -52,13 +85,15 @@ const cancelAction = async () => {
     body: JSON.stringify({ readerId: readerId.value }),
   });
   const result = await response.json();
+  document.getElementById(
+    "gif"
+  ).innerHTML = `<img src="https://media.tenor.com/h9gmhMbg-rAAAAAM/3-idiots-free-free-free.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
     return;
   }
   reader.value = result.reader;
-  // paymentIntent.value = result.paymentIntent;
   addMessage(
     `Canceled reader action on ${reader.value.label} on reader ${reader.value.id}`
   );
@@ -83,11 +118,13 @@ const simulatePayment = async () => {
   addMessage(
     `Simulating a customer tapping their card on simulated reader ${reader.value.id} for payment`
   );
+  document.getElementById(
+    "gif"
+  ).innerHTML = `<img src="https://media.tenor.com/_6WNBQvc9XAAAAAM/bts-freedom.gif" alt="animated gif" />`;
 };
 
 // Capture payment click handler
 const capturePayment = async () => {
-  // const paymentIntentId = ''
   const response = await fetch("/api/payments/capture", {
     method: "POST",
     headers: {
@@ -96,6 +133,9 @@ const capturePayment = async () => {
     body: JSON.stringify({ paymentIntentId: paymentIntent.value.id }),
   });
   const result = await response.json();
+  document.getElementById(
+    "gif"
+  ).innerHTML = `<img src="https://media.tenor.com/CCWYpCgLmykAAAAM/happy-dance.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
@@ -113,6 +153,10 @@ function reset() {
   paymentIntent.value = null;
   amount.value = null;
   reader.value = null;
+  amountObj = {
+    dollar: "",
+    cent: "",
+  };
 }
 
 function addMessage(message) {
@@ -136,92 +180,163 @@ const isCapturable = computed(() => {
 });
 
 const isProcessable = computed(() => {
+  // console.log("amount.value", amount.value)
   return amount.value >= 100 && readerId.value ? true : false;
 });
 </script>
 
 <template>
-  <div class="sr-root">
-    <main class="sr-main">
-      <h2>Collecting Payments with Stripe Terminal</h2>
-      <p>Select a reader and input an amount for the transaction.</p>
-      <section>
-        <div>
+  <div class="grid-section">
+    <div class="instructions">
+      <h2>How to use the Stripe In-person Terminal</h2>
+      <p><i class="fa-solid fa-caret-right"></i>&nbsp; Select a reader</p>
+      <p>
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Input an amount for the
+        transaction.
+      </p>
+      <p>
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
+        <b>"Check Card"</b> to check the client's card
+      </p>
+      <p>
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
+        <b>"Pay Now"</b> to initiate transaction
+      </p>
+      <p>
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
+        <b>"Capture"</b> to capture payment
+      </p>
+    </div>
+    <div class="sr-root">
+      <main class="sr-main">
+        <h2>In-Person Payments Terminal</h2>
+        <p>Select a reader and input an amount for the transaction.</p>
+        <section>
+          <div>
+            <p>
+              <strong>Payment Intent ID:</strong
+              ><span v-if="paymentIntent">{{ paymentIntent.id }}</span>
+            </p>
+            <p>
+              <strong>Payment Intent status:</strong
+              ><span v-if="paymentIntent">{{ paymentIntent.status }}</span>
+            </p>
+          </div>
           <p>
-            <strong>Payment Intent ID:</strong
-            ><span v-if="paymentIntent">{{ paymentIntent.id }}</span>
+            <strong>Reader Status:</strong>
+            <span v-if="reader">{{ reader?.action?.status }}</span>
           </p>
-          <p>
-            <strong>Payment Intent status:</strong
-            ><span v-if="paymentIntent">{{ paymentIntent.status }}</span>
-          </p>
-        </div>
-        <p>
-          <strong>Reader Status:</strong>
-          <span v-if="reader">{{ reader?.action?.status }}</span>
-        </p>
-      </section>
-      <form id="confirm-form">
-        <label>Select Reader: </label>
-        <select
-          v-model="readerId"
-          name="reader"
-          id="reader-select"
-          class="sr-select"
-        >
-          <option value="none" selected disabled>Select a reader</option>
-          <option v-for="r in readersList" :value="r.id" :key="r.id">
-            {{ r.label }} ({{ r.id }})
-          </option>
-        </select>
-        <section class="sr-form-row">
-          <label for="amount">Amount:</label>
-          <input v-model="amount" id="amount" class="sr-input" />
         </section>
-        <section class="button-row">
-          <button
-            type="button"
-            id="capture-button"
-            @click="processPayment"
-            :disabled="!isProcessable"
+        <form id="confirm-form">
+          <label>Select Reader: </label>
+          <select
+            v-model="readerId"
+            name="reader"
+            id="reader-select"
+            class="sr-select"
           >
-            Process
-          </button>
-          <button
-            type="button"
-            id="capture-button"
-            @click="capturePayment"
-            :disabled="!isCapturable"
-          >
-            Capture
-          </button>
-        </section>
-        <section class="button-row">
-          <button
-            id="simulate-payment-button"
-            @click="simulatePayment"
-            type="button"
-            :disabled="!isSimulateable"
-          >
-            Simulate Payment
-          </button>
-          <button @click="cancelAction" id="cancel-button" type="button">
-            Cancel
-          </button>
-        </section>
-        <sr-messages :messages="messages" />
-      </form>
-    </main>
+            <option value="none" selected disabled>Select a reader</option>
+            <option v-for="r in readersList" :value="r.id" :key="r.id">
+              {{ r.label }} ({{ r.id }})
+            </option>
+          </select>
+          <label for="description"></label>
+          <input
+            v-model="description"
+            id="description"
+            type="text"
+            class="sr-input3"
+            placeholder="Add description"
+            autocomplete="off"
+          />
+          <section class="sr-form-row">
+            <label for="amount"><i class="fa-solid fa-dollar-sign"></i></label>
+            <input
+              v-model="amountObj.dollar"
+              id="amount"
+              type="number"
+              class="sr-input1"
+              placeholder="0000"
+              autocomplete="off"
+              @input="input1Fx"
+            />
+            <label for="amount"><i class="fa-solid fa-cent-sign"></i></label>
+            <input
+              v-model="amountObj.cent"
+              id="amount"
+              type="number"
+              class="sr-input2"
+              maxlength="2"
+              placeholder="00"
+              autocomplete="off"
+              @input="input2Fx"
+            />
+          </section>
+          <section class="button-row">
+            <button
+              type="button"
+              id="capture-button"
+              @click="processPayment"
+              :disabled="!isProcessable"
+            >
+              Check Card &nbsp; <i class="fa-regular fa-credit-card"></i>
+            </button>
+            <button
+              type="button"
+              id="capture-button"
+              @click="capturePayment"
+              :disabled="!isCapturable"
+            >
+              Capture &nbsp; <i class="fa-solid fa-record-vinyl"></i>
+            </button>
+          </section>
+          <section class="button-row">
+            <button
+              id="simulate-payment-button"
+              @click="simulatePayment"
+              type="button"
+              :disabled="!isSimulateable"
+            >
+              Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
+            </button>
+            <button @click="cancelAction" id="cancel-button" type="button">
+              Cancel
+            </button>
+          </section>
+          <sr-messages :messages="messages" />
+        </form>
+      </main>
+    </div>
+    <div class="gif" id="gif">
+      <img src="./assets/home.webp" alt="animated gif" />
+    </div>
   </div>
 </template>
 
 <style>
-/* #app {
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-} */
+}
+
+.grid-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0 40px;
+}
+.instructions {
+  padding: 20px;
+  background: #f1faee;
+  text-align: left;
+}
+.gif {
+  text-align: left;
+}
+.gif img {
+  width: 400px;
+}
 </style>
