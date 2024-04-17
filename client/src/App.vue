@@ -398,5 +398,8 @@ let isProcessable = computed(() => {
     width: 100%;
     margin-left: 0%;
   }
+  #app {
+  margin-top: 0px;
+}
 }
 </style>
