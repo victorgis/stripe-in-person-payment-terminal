@@ -1,6 +1,9 @@
 <script setup>
 import { computed, onBeforeMount, ref } from "vue";
 import SrMessages from "./components/SrMessages.vue";
+import { useToast } from "vue-toast-notification";
+
+const toast = useToast();
 
 // Reactive vars that we'll use in our template
 const readersList = ref(null);
@@ -20,6 +23,8 @@ onBeforeMount(async () => {
   console.log("readers", response);
   const result = await response.json();
   readersList.value = result.readersList;
+
+  console.log("toast", toast);
 });
 
 //other fx
@@ -85,7 +90,9 @@ const processPayment = async () => {
     return;
   }
   reader.value = result.reader;
+  checkClick.value = "";
   paymentIntent.value = result.paymentIntent;
+  toast.success("Reader added successfully!");
   addMessage(
     `processing payment for ${amount.value} on reader ${reader.value.label}`
   );
@@ -110,10 +117,16 @@ const cancelAction = async () => {
     return;
   }
   reader.value = result.reader;
+  checkClick.value = "";
+  toast.success("Cancelled successfully!");
   addMessage(
     `Canceled reader action on ${reader.value.label} on reader ${reader.value.id}`
   );
   reset();
+};
+
+const resetAction = () => {
+  window.location.reload();
 };
 
 // Simulate payment click handler
@@ -165,6 +178,7 @@ const capturePayment = async () => {
     return;
   }
   paymentIntent.value = result.paymentIntent;
+  toast.success("Hospital added successfully!");
   addMessage(
     `Capture payment for ${paymentIntent.value.id} ${reader.value.id}`
   );
@@ -237,13 +251,13 @@ let isProcessable = computed(() => {
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
         <b>"Check Reader"</b> to check the client's card
       </p>
-      <p>
+      <!-- <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
         <b>"Pay Now"</b> to initiate transaction
-      </p>
+      </p> -->
       <p>
-        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
-        <b>"Receive"</b> to receive payment
+        <i class="fa-solid fa-caret-right"></i>&nbsp; After payment has been
+        made, click on <b>"Receive"</b> to receive payment
       </p>
     </div>
     <div class="sr-root">
@@ -285,7 +299,7 @@ let isProcessable = computed(() => {
             id="description"
             type="text"
             class="sr-input3"
-            placeholder="Add description"
+            placeholder="Add Invoice Number"
             autocomplete="off"
           />
           <section class="sr-form-row">
@@ -323,23 +337,26 @@ let isProcessable = computed(() => {
             <button
               type="button"
               id="capture-button"
-              @click="checkRecBtn"
+              @click="capturePayment"
               :disabled="!isCapturable"
             >
-              3. Receive &nbsp; <i class="fa-solid fa-record-vinyl"></i>
+              2. Receive &nbsp; <i class="fa-solid fa-record-vinyl"></i>
             </button>
           </section>
           <section class="button-row">
-            <button
+            <!-- <button
               id="simulate-payment-button"
               @click="checkBtn"
               type="button"
               :disabled="!isSimulateable"
             >
               2. Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
-            </button>
+            </button> -->
             <button @click="cancelAction" id="cancel-button" type="button">
-              Cancel
+              Cancel &nbsp; <i class="fa-solid fa-ban"></i>
+            </button>
+            <button @click="resetAction" id="cancel-button" type="button">
+              Reset Reader &nbsp; <i class="fa-solid fa-house"></i>
             </button>
           </section>
           <sr-messages :messages="messages" />
@@ -385,7 +402,6 @@ let isProcessable = computed(() => {
 }
 
 @media (max-width: 720px) {
-  
   .grid-section {
     display: block;
     padding: 10px;
@@ -399,7 +415,7 @@ let isProcessable = computed(() => {
     margin-left: 0%;
   }
   #app {
-  margin-top: 0px;
-}
+    margin-top: 0px;
+  }
 }
 </style>
