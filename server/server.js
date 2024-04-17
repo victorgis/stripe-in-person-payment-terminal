@@ -5,7 +5,7 @@ const express = require("express");
 const app = express();
 app.use(express.json({}));
 const cors = require("cors");
-app.use(express.static("../client/dist"));
+app.use(express.static(process.env.STATIC_DIR));
 app.use(
   cors({
     origin: "*",
@@ -40,7 +40,7 @@ app.post("/api/readers/process-payment", async (req, res) => {
       payment_method_types: ["card_present"],
       capture_method: "manual",
       description: description,
-      invoice: invoice
+      invoice: invoice,
     });
 
     const reader = await stripe.terminal.readers.processPaymentIntent(
