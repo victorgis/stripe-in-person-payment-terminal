@@ -33,13 +33,14 @@ app.get("/api/readers", async (req, res) => {
 
 app.post("/api/readers/process-payment", async (req, res) => {
   try {
-    const { amount, readerId, description } = req.body;
+    const { amount, readerId, description, invoice } = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "usd",
       amount,
       payment_method_types: ["card_present"],
       capture_method: "manual",
       description: description,
+      invoice: invoice
     });
 
     const reader = await stripe.terminal.readers.processPaymentIntent(

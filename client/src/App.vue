@@ -7,7 +7,8 @@ const readersList = ref(null);
 const readerId = ref(null);
 const reader = ref(null);
 const paymentIntent = ref(null);
-const description = ref(null)
+const description = ref(null);
+let checkClick = ref(null);
 let amount = ref(null);
 
 // For error messages
@@ -46,6 +47,21 @@ const input1Fx = () => {
   console.log(amount.value);
 };
 
+const checkBtn = () => {
+  if (!checkClick.value) {
+    simulatePayment();
+  } else {
+    alert("Already clicked! Now click on 'Receive' to proceed");
+  }
+};
+const checkRecBtn = () => {
+  if (!checkClick.value) {
+    alert("Click on 'Pay Now' first bedore preceeding to Receive");
+  } else {
+    capturePayment();
+  }
+};
+
 // Process payment click handler
 const processPayment = async () => {
   const response = await fetch("/api/readers/process-payment", {
@@ -56,13 +72,13 @@ const processPayment = async () => {
     body: JSON.stringify({
       amount: amount.value,
       readerId: readerId.value,
-      description: description.value,
+      description: `WALK-IN: ${description.value}`,
     }),
   });
   const result = await response.json();
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://media.tenor.com/9ky5mvBLS0gAAAAM/free-im-free.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2022/11/30/19/48/19-48-34-65_512.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
@@ -87,7 +103,7 @@ const cancelAction = async () => {
   const result = await response.json();
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://media.tenor.com/h9gmhMbg-rAAAAAM/3-idiots-free-free-free.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2022/11/03/16/42/16-42-39-820_512.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
@@ -110,17 +126,24 @@ const simulatePayment = async () => {
     body: JSON.stringify({ readerId: reader.value.id }),
   });
   const result = await response.json();
+
+  checkClick.value = result.reader.id;
+
   const { error } = result;
   if (error) {
     addMessage(error.message);
     return;
   }
+
   addMessage(
     `Simulating a customer tapping their card on simulated reader ${reader.value.id} for payment`
   );
+
+  // isSimulateable = true;
+  // isCapturable = true;
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://media.tenor.com/_6WNBQvc9XAAAAAM/bts-freedom.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2024/02/21/06/39/06-39-56-211_512.gif" alt="animated gif" />`;
 };
 
 // Capture payment click handler
@@ -135,7 +158,7 @@ const capturePayment = async () => {
   const result = await response.json();
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://media.tenor.com/CCWYpCgLmykAAAAM/happy-dance.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2023/03/10/13/25/13-25-13-552_512.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     addMessage(error.message);
@@ -153,6 +176,22 @@ function reset() {
   paymentIntent.value = null;
   amount.value = null;
   reader.value = null;
+  isProcessable = computed(() => {
+    // console.log("amount.value", amount.value)
+    return amount.value >= 100 && readerId.value ? true : false;
+  });
+  isSimulateable = computed(() => {
+    if (reader.value) {
+      return reader.value?.device_type?.includes("simulated") &&
+        paymentIntent?.value?.id
+        ? true
+        : false;
+    }
+    return false;
+  });
+  isCapturable = computed(() => {
+    return paymentIntent?.value?.id ? true : false;
+  });
   amountObj = {
     dollar: "",
     cent: "",
@@ -165,7 +204,7 @@ function addMessage(message) {
 
 // Computed properties to handle enabling and disabling of buttons
 // Don't worry about this stuff: it'll depend on your client.
-const isSimulateable = computed(() => {
+let isSimulateable = computed(() => {
   if (reader.value) {
     return reader.value?.device_type?.includes("simulated") &&
       paymentIntent?.value?.id
@@ -175,11 +214,11 @@ const isSimulateable = computed(() => {
   return false;
 });
 
-const isCapturable = computed(() => {
+let isCapturable = computed(() => {
   return paymentIntent?.value?.id ? true : false;
 });
 
-const isProcessable = computed(() => {
+let isProcessable = computed(() => {
   // console.log("amount.value", amount.value)
   return amount.value >= 100 && readerId.value ? true : false;
 });
@@ -196,7 +235,7 @@ const isProcessable = computed(() => {
       </p>
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
-        <b>"Check Card"</b> to check the client's card
+        <b>"Check Reader"</b> to check the client's card
       </p>
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
@@ -204,7 +243,7 @@ const isProcessable = computed(() => {
       </p>
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
-        <b>"Capture"</b> to capture payment
+        <b>"Receive"</b> to receive payment
       </p>
     </div>
     <div class="sr-root">
@@ -279,25 +318,25 @@ const isProcessable = computed(() => {
               @click="processPayment"
               :disabled="!isProcessable"
             >
-              Check Card &nbsp; <i class="fa-regular fa-credit-card"></i>
+              1. Check Reader &nbsp; <i class="fa-regular fa-credit-card"></i>
             </button>
             <button
               type="button"
               id="capture-button"
-              @click="capturePayment"
+              @click="checkRecBtn"
               :disabled="!isCapturable"
             >
-              Capture &nbsp; <i class="fa-solid fa-record-vinyl"></i>
+              3. Receive &nbsp; <i class="fa-solid fa-record-vinyl"></i>
             </button>
           </section>
           <section class="button-row">
             <button
               id="simulate-payment-button"
-              @click="simulatePayment"
+              @click="checkBtn"
               type="button"
               :disabled="!isSimulateable"
             >
-              Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
+              2. Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
             </button>
             <button @click="cancelAction" id="cancel-button" type="button">
               Cancel
@@ -307,8 +346,11 @@ const isProcessable = computed(() => {
         </form>
       </main>
     </div>
-    <div class="gif" id="gif">
-      <img src="./assets/home.webp" alt="animated gif" />
+    <div class="gif img-fluid" id="gif">
+      <img
+        src="https://cdn.pixabay.com/animation/2022/11/03/16/42/16-42-39-820_512.gif"
+        alt="animated gif"
+      />
     </div>
   </div>
 </template>
@@ -329,6 +371,7 @@ const isProcessable = computed(() => {
   padding: 0 40px;
 }
 .instructions {
+  /* width: 400px; */
   padding: 20px;
   background: #f1faee;
   text-align: left;
@@ -338,5 +381,22 @@ const isProcessable = computed(() => {
 }
 .gif img {
   width: 400px;
+  margin-left: 10%;
+}
+
+@media (max-width: 720px) {
+  
+  .grid-section {
+    display: block;
+    padding: 10px;
+  }
+  .instructions {
+    padding: 10px;
+    text-align: left;
+  }
+  .gif img {
+    width: 100%;
+    margin-left: 0%;
+  }
 }
 </style>

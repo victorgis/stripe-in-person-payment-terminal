@@ -77,6 +77,7 @@ h4 {
   align-self: center;
 }
 .sr-main {
+  width: 110%;
   flex-direction: column;
   position: relative;
 }
@@ -327,6 +328,7 @@ button:disabled {
 button,
 .fullwidth {
   width: 100%;
+  
 }
 
 a {
@@ -363,13 +365,14 @@ pre {
   padding-top: 12px;
 }
 
+
 /* Responsiveness */
 @media (max-width: 720px) {
   .sr-root {
     flex-direction: column;
     justify-content: flex-start;
-    padding: 48px 20px;
-    min-width: 320px;
+    padding: 10px 0;
+    /* min-width: 320px; */
   }
 
   .sr-header__logo {
@@ -386,6 +389,9 @@ pre {
 
   .sr-main {
     width: 100%;
+  }
+  button {
+    font-size: 12px;
   }
 }
 
