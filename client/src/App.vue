@@ -243,6 +243,7 @@ let isProcessable = computed(() => {
     <div class="instructions">
       <h2>How to use the Stripe In-person Terminal</h2>
       <p><i class="fa-solid fa-caret-right"></i>&nbsp; Select a reader</p>
+      <p><i class="fa-solid fa-caret-right"></i>&nbsp; Input payment invoice</p>
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Input an amount for the
         transaction.
