@@ -22,6 +22,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
   },
 });
 
+console.log("stripe", stripe);
+
 app.get("/api/readers", async (req, res) => {
   try {
     const { data: readers } = await stripe.terminal.readers.list();
@@ -85,6 +87,8 @@ app.post("/api/readers/cancel-action", async (req, res) => {
     res.send({ error: { message: e.message } });
   }
 });
+
+console.log("stripe", stripe);
 
 app.listen(4242, () =>
   console.log(`Node server listening at http://localhost:4242`)

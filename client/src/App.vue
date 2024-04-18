@@ -12,6 +12,7 @@ const reader = ref(null);
 const paymentIntent = ref(null);
 const description = ref(null);
 let checkClick = ref(null);
+// let checkCancel = ref(null);
 let amount = ref(null);
 
 // For error messages
@@ -23,8 +24,7 @@ onBeforeMount(async () => {
   console.log("readers", response);
   const result = await response.json();
   readersList.value = result.readersList;
-
-  console.log("toast", toast);
+  document.getElementById("cancel-button").disabled = true;
 });
 
 //other fx
@@ -67,6 +67,8 @@ const checkRecBtn = () => {
   }
 };
 
+// checkCancel
+
 // Process payment click handler
 const processPayment = async () => {
   const response = await fetch("/api/readers/process-payment", {
@@ -81,11 +83,21 @@ const processPayment = async () => {
     }),
   });
   const result = await response.json();
+  const checker = result.reader.status;
+
+  // checkCancel =  checker;
   document.getElementById(
     "gif"
   ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2022/11/30/19/48/19-48-34-65_512.gif" alt="animated gif" />`;
+
+  if (checker === "online") {
+    document.getElementById("cancel-button").disabled = false;
+  } else {
+    document.getElementById("cancel-button").disabled = true;
+  }
   const { error } = result;
   if (error) {
+    toast.error(error.message);
     addMessage(error.message);
     return;
   }
@@ -113,6 +125,7 @@ const cancelAction = async () => {
   ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2022/11/03/16/42/16-42-39-820_512.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
+    toast.error(error.message);
     addMessage(error.message);
     return;
   }
@@ -144,6 +157,7 @@ const simulatePayment = async () => {
 
   const { error } = result;
   if (error) {
+    toast.error(error.message);
     addMessage(error.message);
     return;
   }
@@ -160,7 +174,16 @@ const simulatePayment = async () => {
 };
 
 // Capture payment click handler
-const capturePayment = async () => {
+const capturePayment = async (e) => {
+  // let newId
+  // const id = paymentIntent.value.id
+  // if (!id){
+  //   console.log("receive per first")
+  // }else{
+  //   newId = 34565
+  // }
+  console.log("E", e);
+  console.log("payment intent", paymentIntent.value.id);
   const response = await fetch("/api/payments/capture", {
     method: "POST",
     headers: {
@@ -174,6 +197,7 @@ const capturePayment = async () => {
   ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2023/03/10/13/25/13-25-13-552_512.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
+    toast.error(error.message);
     addMessage(error.message);
     return;
   }
