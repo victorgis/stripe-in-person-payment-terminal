@@ -21,7 +21,6 @@ const messages = ref([]);
 // Get readers before mounting the component
 onBeforeMount(async () => {
   const response = await fetch("/api/readers");
-  console.log("readers", response);
   const result = await response.json();
   readersList.value = result.readersList;
   document.getElementById("cancel-button").disabled = true;
@@ -40,7 +39,6 @@ const input2Fx = () => {
   }
   amountObj.cent = parseInt(firstTwoDigits);
   input1Fx();
-  console.log(amountObj.cent);
 };
 
 const input1Fx = () => {
@@ -49,7 +47,6 @@ const input1Fx = () => {
   const newDollar = amountObj.dollar.toString();
   const tt = `${newDollar}${newCent}`;
   amount.value = parseInt(tt);
-  console.log(amount.value);
 };
 
 const checkBtn = () => {
@@ -69,6 +66,7 @@ const checkRecBtn = () => {
 
 // checkCancel
 
+let processor;
 // Process payment click handler
 const processPayment = async () => {
   const response = await fetch("/api/readers/process-payment", {
@@ -117,7 +115,7 @@ const cancelAction = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ readerId: readerId.value }),
+    body: JSON.stringify({ paymentIntent: paymentIntent.value.id }),
   });
   const result = await response.json();
   document.getElementById(
@@ -165,9 +163,6 @@ const simulatePayment = async () => {
   addMessage(
     `Simulating a customer tapping their card on simulated reader ${reader.value.id} for payment`
   );
-
-  // isSimulateable = true;
-  // isCapturable = true;
   document.getElementById(
     "gif"
   ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2024/02/21/06/39/06-39-56-211_512.gif" alt="animated gif" />`;
@@ -175,15 +170,6 @@ const simulatePayment = async () => {
 
 // Capture payment click handler
 const capturePayment = async (e) => {
-  // let newId
-  // const id = paymentIntent.value.id
-  // if (!id){
-  //   console.log("receive per first")
-  // }else{
-  //   newId = 34565
-  // }
-  console.log("E", e);
-  console.log("payment intent", paymentIntent.value.id);
   const response = await fetch("/api/payments/capture", {
     method: "POST",
     headers: {
@@ -215,7 +201,6 @@ function reset() {
   amount.value = null;
   reader.value = null;
   isProcessable = computed(() => {
-    // console.log("amount.value", amount.value)
     return amount.value >= 100 && readerId.value ? true : false;
   });
   isSimulateable = computed(() => {
@@ -257,7 +242,6 @@ let isCapturable = computed(() => {
 });
 
 let isProcessable = computed(() => {
-  // console.log("amount.value", amount.value)
   return amount.value >= 100 && readerId.value ? true : false;
 });
 </script>
@@ -369,14 +353,15 @@ let isProcessable = computed(() => {
             </button>
           </section>
           <section class="button-row">
-            <!-- <button
+            <button
               id="simulate-payment-button"
               @click="checkBtn"
               type="button"
               :disabled="!isSimulateable"
             >
               2. Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
-            </button> -->
+            </button>
+
             <button @click="cancelAction" id="cancel-button" type="button">
               Cancel &nbsp; <i class="fa-solid fa-ban"></i>
             </button>

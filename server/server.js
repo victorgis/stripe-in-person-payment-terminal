@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 app.use(express.json({}));
 const cors = require("cors");
+const { read } = require("fs");
 app.use(express.static(process.env.STATIC_DIR));
 app.use(
   cors({
@@ -22,7 +23,23 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
   },
 });
 
-console.log("stripe", stripe);
+// const terminal = StripeTerminal.create({
+//   onFetchConnectionToken: fetchConnectionToken,
+//   onUnexpectedReaderDisconnect: unexpectedDisconnect,
+// });
+// const webhookEndpoint = await stripe.webhookEndpoints.create({
+//   enabled_events: [
+//     "terminal.reader.action_succeeded",
+//     "terminal.reader.action_failed",
+//   ],
+//   url: "https://example.com/my/webhook/endpoint",
+// });
+
+function unexpectedDisconnect() {
+  // You might want to display UI to notify the user and start re-discovering readers
+}
+
+// console.log("stripe", stripe);
 
 app.get("/api/readers", async (req, res) => {
   try {
@@ -33,22 +50,27 @@ app.get("/api/readers", async (req, res) => {
   }
 });
 
+let intent;
 app.post("/api/readers/process-payment", async (req, res) => {
   try {
-    const { amount, readerId, description, invoice } = req.body;
+    const { amount, readerId, description } = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "usd",
       amount,
       payment_method_types: ["card_present"],
       capture_method: "manual",
       description: description,
-      invoice: invoice,
     });
+
+    intent = paymentIntent;
 
     const reader = await stripe.terminal.readers.processPaymentIntent(
       readerId,
       {
         payment_intent: paymentIntent.id,
+        process_config: {
+          enable_customer_cancellation: true,
+        },
       }
     );
     res.send({ reader, paymentIntent });
@@ -80,15 +102,15 @@ app.post("/api/payments/capture", async (req, res) => {
 
 app.post("/api/readers/cancel-action", async (req, res) => {
   try {
-    const { readerId } = req.body;
-    const reader = await stripe.terminal.readers.cancelAction(readerId);
+    const { paymentIntent } = req.body;
+    const reader = await stripe.paymentIntents.cancel(paymentIntent);
     res.send({ reader });
-  } catch (error) {
+  } catch (e) {
     res.send({ error: { message: e.message } });
   }
 });
 
-console.log("stripe", stripe);
+// console.log("stripe", stripe);
 
 app.listen(4242, () =>
   console.log(`Node server listening at http://localhost:4242`)
