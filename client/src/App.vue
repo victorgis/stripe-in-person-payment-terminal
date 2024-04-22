@@ -44,15 +44,27 @@ onMounted(async () => {
         toast.success("Reader Action Succeeded");
         break;
       case "charge.failed":
+         document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Charge Failed");
         break;
       case "checkout.session.async_payment_failed":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Checkout Session Async Payment Failed");
         break;
       case "invoice.payment_failed":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Invoice Payment Failed");
         break;
       case "payment_intent.canceled":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/Decline-error.gif" alt="animated gif" />`;
         toast.error("Payment Intent Canceled");
         break;
       case "charge.refunded":
@@ -62,12 +74,21 @@ onMounted(async () => {
         toast.error("Charge Refund Updated");
         break;
       case "payment_intent.payment_failed":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Payment Intent Failed");
         break;
       case "setup_intent.setup_failed":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Setup Intent Failed");
         break;
       case "subscription.payment_failed":
+        document.getElementById(
+          "gif"
+        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
         toast.error("Subscription Payment Failed");
         break;
       case "payment_intent.amount_capturable_updated":
@@ -240,7 +261,7 @@ const capturePayment = async (e) => {
   const result = await response.json();
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2023/03/10/13/25/13-25-13-552_512.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="./assets/Mobile-Payment.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     toast.error(error.message);
@@ -311,11 +332,9 @@ let isProcessable = computed(() => {
     <div class="instructions">
       <h2>How to use the Stripe In-person Terminal</h2>
       <p><i class="fa-solid fa-caret-right"></i>&nbsp; Select a reader</p>
-      <p><i class="fa-solid fa-caret-right"></i>&nbsp; Input payment invoice</p>
-      <p>
-        <i class="fa-solid fa-caret-right"></i>&nbsp; Input an amount for the
-        transaction.
-      </p>
+      <p><i class="fa-solid fa-caret-right"></i>&nbsp; Input invoice number</p>
+      <p><i class="fa-solid fa-caret-right"></i>&nbsp; Input payment amount</p>
+
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
         <b>"Check Reader"</b> to check the client's card
@@ -413,17 +432,17 @@ let isProcessable = computed(() => {
             </button>
           </section>
           <section class="button-row">
-            <!-- <button
+            <button
               id="simulate-payment-button"
               @click="checkBtn"
               type="button"
               :disabled="!isSimulateable"
             >
               2. Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
-            </button> -->
+            </button>
 
             <button @click="cancelAction" id="cancel-button" type="button">
-              Cancel &nbsp; <i class="fa-solid fa-ban"></i>
+              Refund &nbsp; <i class="fa-solid fa-ban"></i>
             </button>
             <button @click="resetAction" id="cancel-button" type="button">
               Reset Reader &nbsp; <i class="fa-solid fa-house"></i>
