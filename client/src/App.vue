@@ -44,27 +44,27 @@ onMounted(async () => {
         toast.success("Reader Action Succeeded");
         break;
       case "charge.failed":
-         document.getElementById(
+        document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Charge Failed");
         break;
       case "checkout.session.async_payment_failed":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Checkout Session Async Payment Failed");
         break;
       case "invoice.payment_failed":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Invoice Payment Failed");
         break;
       case "payment_intent.canceled":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/Decline-error.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Payment Intent Canceled");
         break;
       case "charge.refunded":
@@ -76,19 +76,19 @@ onMounted(async () => {
       case "payment_intent.payment_failed":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Payment Intent Failed");
         break;
       case "setup_intent.setup_failed":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Setup Intent Failed");
         break;
       case "subscription.payment_failed":
         document.getElementById(
           "gif"
-        ).innerHTML = `<img src="./assets/failed.gif" alt="animated gif" />`;
+        ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
         toast.error("Subscription Payment Failed");
         break;
       case "payment_intent.amount_capturable_updated":
@@ -167,7 +167,7 @@ const processPayment = async () => {
   // checkCancel =  checker;
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="https://cdn.pixabay.com/animation/2022/11/30/19/48/19-48-34-65_512.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Check%20Reader.gif" alt="animated gif" />`;
 
   if (checker === "online") {
     document.getElementById("cancel-button").disabled = false;
@@ -261,7 +261,7 @@ const capturePayment = async (e) => {
   const result = await response.json();
   document.getElementById(
     "gif"
-  ).innerHTML = `<img src="./assets/Mobile-Payment.gif" alt="animated gif" />`;
+  ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Receive.gif" alt="animated gif" />`;
   const { error } = result;
   if (error) {
     toast.error(error.message);
