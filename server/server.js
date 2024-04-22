@@ -2,16 +2,28 @@
 const dotenv = require("dotenv").config();
 const path = require("path");
 const express = require("express");
+
 const app = express();
 app.use(express.json({}));
 const cors = require("cors");
 const { read } = require("fs");
+
+//Persisting data to the front
+const WebSocket = require("ws");
+const http = require("http");
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+const bodyParser = require("body-parser");
+app.use(bodyParser.raw({ type: "*/*" }));
 app.use(express.static(process.env.STATIC_DIR));
 app.use(
   cors({
     origin: "*",
   })
 );
+
+let WEBHOOK_EVENT;
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
@@ -22,24 +34,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
     url: "https://github.com/stripe-samples",
   },
 });
-
-// const terminal = StripeTerminal.create({
-//   onFetchConnectionToken: fetchConnectionToken,
-//   onUnexpectedReaderDisconnect: unexpectedDisconnect,
-// });
-// const webhookEndpoint = await stripe.webhookEndpoints.create({
-//   enabled_events: [
-//     "terminal.reader.action_succeeded",
-//     "terminal.reader.action_failed",
-//   ],
-//   url: "https://example.com/my/webhook/endpoint",
-// });
-
-function unexpectedDisconnect() {
-  // You might want to display UI to notify the user and start re-discovering readers
-}
-
-// console.log("stripe", stripe);
 
 app.get("/api/readers", async (req, res) => {
   try {
@@ -110,8 +104,20 @@ app.post("/api/readers/cancel-action", async (req, res) => {
   }
 });
 
-// console.log("stripe", stripe);
+app.post("/webhook", (req, res) => {
+  const event = req.body;
+  WEBHOOK_EVENT = req.body;
 
-app.listen(4242, () =>
+  wss.clients.forEach((client) => {
+    console.log("client", client);
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(event));
+    }
+  });
+
+  res.sendStatus(200);
+});
+
+server.listen(4242, () =>
   console.log(`Node server listening at http://localhost:4242`)
 );

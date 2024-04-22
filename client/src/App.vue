@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, onMounted } from "vue";
 import SrMessages from "./components/SrMessages.vue";
 import { useToast } from "vue-toast-notification";
 
@@ -12,8 +12,9 @@ const reader = ref(null);
 const paymentIntent = ref(null);
 const description = ref(null);
 let checkClick = ref(null);
-// let checkCancel = ref(null);
+let rr = ref(null);
 let amount = ref(null);
+const reactiveVariable = ref("nuller");
 
 // For error messages
 const messages = ref([]);
@@ -23,7 +24,68 @@ onBeforeMount(async () => {
   const response = await fetch("/api/readers");
   const result = await response.json();
   readersList.value = result.readersList;
-  document.getElementById("cancel-button").disabled = true;
+});
+
+// Persist data when the component is mounted
+onMounted(async () => {
+  const socket = new WebSocket("ws://localhost:4242");
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+  };
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    console.log("data.type", data.type);
+    switch (data.type) {
+      case "payment_intent.created":
+        toast.success("Payment Intent Created");
+        break;
+      case "terminal.reader.action_succeeded":
+        toast.success("Reader Action Succeeded");
+        break;
+      case "charge.failed":
+        toast.error("Charge Failed");
+        break;
+      case "checkout.session.async_payment_failed":
+        toast.error("Checkout Session Async Payment Failed");
+        break;
+      case "invoice.payment_failed":
+        toast.error("Invoice Payment Failed");
+        break;
+      case "payment_intent.canceled":
+        toast.error("Payment Intent Canceled");
+        break;
+      case "charge.refunded":
+        toast.error("Charge Refunded");
+        break;
+      case "charge.refund.updated":
+        toast.error("Charge Refund Updated");
+        break;
+      case "payment_intent.payment_failed":
+        toast.error("Payment Intent Failed");
+        break;
+      case "setup_intent.setup_failed":
+        toast.error("Setup Intent Failed");
+        break;
+      case "subscription.payment_failed":
+        toast.error("Subscription Payment Failed");
+        break;
+      case "payment_intent.amount_capturable_updated":
+        toast.success("Amount Captured by Reader");
+        break;
+      case "charge.succeeded":
+        toast.success("Payment Successful");
+        break;
+      default:
+        console.log("else", data.type);
+    }
+  };
+  socket.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+  socket.onclose = () => {
+    console.log("WebSocket connection closed");
+  };
 });
 
 //other fx
@@ -63,8 +125,6 @@ const checkRecBtn = () => {
     capturePayment();
   }
 };
-
-// checkCancel
 
 let processor;
 // Process payment click handler
@@ -188,7 +248,7 @@ const capturePayment = async (e) => {
     return;
   }
   paymentIntent.value = result.paymentIntent;
-  toast.success("Hospital added successfully!");
+  toast.success("Payment Captured successfully!");
   addMessage(
     `Capture payment for ${paymentIntent.value.id} ${reader.value.id}`
   );
