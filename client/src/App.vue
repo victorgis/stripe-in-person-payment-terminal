@@ -339,13 +339,13 @@ let isProcessable = computed(() => {
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
         <b>"Check Reader"</b> to check the client's card
       </p>
-      <!-- <p>
-        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
-        <b>"Pay Now"</b> to initiate transaction
-      </p> -->
+      
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; After payment has been
         made, click on <b>"Receive"</b> to receive payment
+      </p>
+      <p>
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on <b>'Refund'</b> to refund a payment before receiving it
       </p>
     </div>
     <div class="sr-root">
@@ -432,14 +432,14 @@ let isProcessable = computed(() => {
             </button>
           </section>
           <section class="button-row">
-            <button
+            <!-- <button
               id="simulate-payment-button"
               @click="checkBtn"
               type="button"
               :disabled="!isSimulateable"
             >
               2. Pay Now &nbsp; <i class="fa-solid fa-cart-shopping"></i>
-            </button>
+            </button> -->
 
             <button @click="cancelAction" id="cancel-button" type="button">
               Refund &nbsp; <i class="fa-solid fa-ban"></i>
