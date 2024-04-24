@@ -36,6 +36,7 @@ onMounted(async () => {
     const data = JSON.parse(event.data);
 
     console.log("data.type", data.type);
+
     switch (data.type) {
       case "payment_intent.created":
         toast.success("Payment Intent Created");
@@ -95,6 +96,9 @@ onMounted(async () => {
         toast.success("Amount Captured by Reader");
         break;
       case "charge.succeeded":
+        toast.success("Charge Successful");
+        break;
+      case "payment_intent.succeeded":
         toast.success("Payment Successful");
         break;
       default:
@@ -250,7 +254,7 @@ const simulatePayment = async () => {
 };
 
 // Capture payment click handler
-const capturePayment = async (e) => {
+const capturePayment = async () => {
   const response = await fetch("/api/payments/capture", {
     method: "POST",
     headers: {
@@ -339,13 +343,14 @@ let isProcessable = computed(() => {
         <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
         <b>"Check Reader"</b> to check the client's card
       </p>
-      
+
       <p>
         <i class="fa-solid fa-caret-right"></i>&nbsp; After payment has been
         made, click on <b>"Receive"</b> to receive payment
       </p>
       <p>
-        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on <b>'Refund'</b> to refund a payment before receiving it
+        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
+        <b>'Refund'</b> to refund a payment before receiving it
       </p>
     </div>
     <div class="sr-root">

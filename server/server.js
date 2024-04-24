@@ -79,7 +79,7 @@ app.post("/api/readers/simulate-payment", async (req, res) => {
     const reader =
       await stripe.testHelpers.terminal.readers.presentPaymentMethod(readerId);
     res.send({ reader });
-  } catch (error) {
+  } catch (e) {
     res.send({ error: { message: e.message } });
   }
 });
@@ -89,7 +89,7 @@ app.post("/api/payments/capture", async (req, res) => {
     const { paymentIntentId } = req.body;
     const paymentIntent = await stripe.paymentIntents.capture(paymentIntentId);
     res.send({ paymentIntent });
-  } catch (error) {
+  } catch (e) {
     res.send({ error: { message: e.message } });
   }
 });
@@ -109,7 +109,7 @@ app.post("/webhook", (req, res) => {
   WEBHOOK_EVENT = req.body;
 
   wss.clients.forEach((client) => {
-    console.log("client", client);
+    // console.log("client", client);
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(event));
     }
