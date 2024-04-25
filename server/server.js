@@ -105,7 +105,6 @@ app.post("/api/readers/cancel-action", async (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  const sig = req.headers["stripe-signature"];
   const payload = req.body;
 
   const payloadString = JSON.stringify(payload, null, 2);
