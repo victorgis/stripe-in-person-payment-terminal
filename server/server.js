@@ -106,23 +106,17 @@ app.post("/api/readers/cancel-action", async (req, res) => {
 
 app.post("/webhook", (req, res) => {
   const sig = req.headers["stripe-signature"];
-  const payload = req.body
+  const payload = req.body;
 
   const payloadString = JSON.stringify(payload, null, 2);
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+
   const header = stripe.webhooks.generateTestHeaderString({
     payload: payloadString,
-    secret: process.env.STRIPE_WEBHOOK_SECRET,
+    secret,
   });
-  const event = stripe.webhooks.constructEvent(
-    payloadString,
-    header,
-    process.env.STRIPE_WEBHOOK_SECRET
-  );
-  WEBHOOK_EVENT = stripe.webhooks.constructEvent(
-    payloadString,
-    header,
-    process.env.STRIPE_WEBHOOK_SECRET
-  );
+  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+  WEBHOOK_EVENT = stripe.webhooks.constructEvent(payloadString, header, secret);
 
   wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
