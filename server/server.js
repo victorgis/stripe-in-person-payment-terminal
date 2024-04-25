@@ -105,8 +105,18 @@ app.post("/api/readers/cancel-action", async (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  const event = req.body;
-  WEBHOOK_EVENT = req.body;
+  const sig = req.headers["stripe-signature"];
+
+  const event = stripe.webhooks.constructEvent(
+    req.body,
+    sig,
+    process.env.WEBHOOK_EVENT_KEY
+  );
+  WEBHOOK_EVENT = stripe.webhooks.constructEvent(
+    req.body,
+    sig,
+    process.env.WEBHOOK_EVENT_KEY
+  );
 
   wss.clients.forEach((client) => {
     // console.log("client", client);
