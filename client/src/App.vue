@@ -66,7 +66,7 @@ onMounted(async () => {
         document.getElementById(
           "gif"
         ).innerHTML = `<img src="https://6626b99d2a2e2c29a9bc8c85--prismatic-starburst-76b90a.netlify.app/assets/img/Decline.gif" alt="animated gif" />`;
-        toast.error("Payment Intent Canceled");
+        // toast.error("Payment Intent Canceled");
         break;
       case "charge.refunded":
         toast.error("Charge Refunded");
@@ -122,13 +122,12 @@ const input2Fx = () => {
   amountObj.cent = amountObj.cent.toString();
   let firstTwoDigits = amountObj.cent.slice(0, 2);
 
-  
   if (amountObj.cent.length > 2) {
     alert("Input two digits only");
   }
   // amountObj.cent = parseInt(firstTwoDigits);
   amountObj.cent = firstTwoDigits;
-  console.log("firstTwoDigits", amountObj.cent)
+  console.log("firstTwoDigits", amountObj.cent);
   input1Fx();
 };
 
@@ -225,7 +224,7 @@ const cancelAction = async () => {
   reset();
 };
 
-const resetAction = () => {
+const resetAction = async () => {
   window.location.reload();
 };
 
