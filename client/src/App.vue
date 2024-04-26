@@ -121,10 +121,14 @@ let amountObj = {
 const input2Fx = () => {
   amountObj.cent = amountObj.cent.toString();
   let firstTwoDigits = amountObj.cent.slice(0, 2);
+
+  
   if (amountObj.cent.length > 2) {
     alert("Input two digits only");
   }
-  amountObj.cent = parseInt(firstTwoDigits);
+  // amountObj.cent = parseInt(firstTwoDigits);
+  amountObj.cent = firstTwoDigits;
+  console.log("firstTwoDigits", amountObj.cent)
   input1Fx();
 };
 
@@ -410,7 +414,7 @@ let isProcessable = computed(() => {
             <input
               v-model="amountObj.cent"
               id="amount"
-              type="number"
+              type="text"
               class="sr-input2"
               maxlength="2"
               placeholder="00"
