@@ -119,13 +119,9 @@ app.post("/webhook", (req, res) => {
 
   wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
-
-    // Send updates to connected clients
     if (WEBHOOK_EVENT) {
       ws.send(JSON.stringify(WEBHOOK_EVENT));
     }
-
-    // Optionally, handle WebSocket client disconnects
     ws.on("close", () => {
       console.log("WebSocket client disconnected");
     });
