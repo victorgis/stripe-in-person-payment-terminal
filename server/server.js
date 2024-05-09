@@ -104,18 +104,42 @@ app.post("/api/readers/cancel-action", async (req, res) => {
   }
 });
 
+// app.post("/webhook", (req, res) => {
+//   const payload = req.body;
+
+//   const payloadString = JSON.stringify(payload, null, 2);
+//   const secret = process.env.STRIPE_WEBHOOK_SECRET;
+
+//   const header = stripe.webhooks.generateTestHeaderString({
+//     payload: payloadString,
+//     secret,
+//   });
+//   const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+//   WEBHOOK_EVENT = stripe.webhooks.constructEvent(payloadString, header, secret);
+
+// wss.on("connection", (ws) => {
+//   console.log("WebSocket client connected");
+//   if (WEBHOOK_EVENT) {
+//     ws.send(JSON.stringify(WEBHOOK_EVENT));
+//   }
+//   ws.on("close", () => {
+//     console.log("WebSocket client disconnected");
+//   });
+// });
+
+//   wss.clients.forEach((client) => {
+//     console.log("client", client);
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(JSON.stringify(event));
+//     }
+//   });
+
+//   res.sendStatus(200);
+// });
+
 app.post("/webhook", (req, res) => {
-  const payload = req.body;
-
-  const payloadString = JSON.stringify(payload, null, 2);
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  const header = stripe.webhooks.generateTestHeaderString({
-    payload: payloadString,
-    secret,
-  });
-  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
-  WEBHOOK_EVENT = stripe.webhooks.constructEvent(payloadString, header, secret);
+  const event = req.body;
+  WEBHOOK_EVENT = req.body;
 
   wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
@@ -137,6 +161,7 @@ app.post("/webhook", (req, res) => {
   res.sendStatus(200);
 });
 
-server.listen(4242, () =>
-  console.log(`Node server listening at http://localhost:4242`)
+
+server.listen(3001, () =>
+  console.log(`Node server listening at http://localhost:3001`)
 );

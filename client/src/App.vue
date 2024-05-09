@@ -14,7 +14,6 @@ const description = ref(null);
 let checkClick = ref(null);
 let rr = ref(null);
 let amount = ref(null);
-const reactiveVariable = ref("nuller");
 
 // For error messages
 const messages = ref([]);
@@ -28,7 +27,7 @@ onBeforeMount(async () => {
 
 // Persist data when the component is mounted
 onMounted(async () => {
-  const socket = new WebSocket("ws://localhost:4242");
+  const socket = new WebSocket("ws://localhost:3001");
   socket.onopen = () => {
     console.log("WebSocket connection established");
   };

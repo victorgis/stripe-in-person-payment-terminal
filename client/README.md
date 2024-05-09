@@ -23,6 +23,6 @@ yarn dev
 ```
 
 This will start the react server running on localhost:3000. Note that the
-backend servers run on localhost:4242, but the React UI will be available at
+backend servers run on localhost:3001, but the React UI will be available at
 localhost:3000. API requests to your backend are proxied by the
 Vite server using the settings in `./vite.config.json`.
