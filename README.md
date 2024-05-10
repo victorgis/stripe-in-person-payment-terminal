@@ -29,7 +29,5 @@ Firstly cd < folder directory >
 2. $ stripe listen --forward-to localhost:5002/webhook
 3. $ srtripe trigger payment_intent.succeeded [Check stripe dashboard for other stripe events to run]
 
-- [Client](./client/README.md)
-- [Server](./server/README.md)
 
 
