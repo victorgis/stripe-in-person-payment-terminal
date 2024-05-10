@@ -29,5 +29,7 @@ Firstly cd < folder directory >
 2. $ stripe listen --forward-to localhost:5002/webhook
 3. $ srtripe trigger payment_intent.succeeded [Check stripe dashboard for other stripe events to run]
 
+After this 3 steps for Desktop windows users, going forward, you can run the StartApp.bat executable file outside your code editor, and then the startStripeCLI.bat also.
+
 
 
