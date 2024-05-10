@@ -124,14 +124,23 @@ const input2Fx = () => {
   if (amountObj.cent.length > 2) {
     alert("Input two digits only");
   }
-  // amountObj.cent = parseInt(firstTwoDigits);
   amountObj.cent = firstTwoDigits;
   console.log("firstTwoDigits", amountObj.cent);
   input1Fx();
 };
 
+function addLeadingZero(number) {
+  let numberString = number.toString();
+  if (numberString.length < 2) {
+    numberString = "0" + numberString;
+  }
+  return numberString;
+}
+
 const input1Fx = () => {
-  const oldCent = amountObj.cent ? amountObj.cent : "00";
+  const amountCent = addLeadingZero(amountObj.cent);
+  console.log("cent", amountCent);
+  const oldCent = amountCent ? amountCent : "00";
   const newCent = oldCent.toString();
   const newDollar = amountObj.dollar.toString();
   const tt = `${newDollar}${newCent}`;
