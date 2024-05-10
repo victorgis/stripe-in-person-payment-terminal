@@ -360,8 +360,8 @@ let isProcessable = computed(() => {
         made, click on <b>"Receive"</b> to receive payment
       </p>
       <p>
-        <i class="fa-solid fa-caret-right"></i>&nbsp; Click on
-        <b>'Refund'</b> to refund a payment before receiving it
+        <i class="fa-solid fa-caret-right"></i>&nbsp; If there's need to refund, click on
+        <b>'Refund'</b> button to refund a payment before clicking on the 'Receive' button.
       </p>
     </div>
     <div class="sr-root">
